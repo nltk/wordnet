@@ -8,6 +8,7 @@ from lazyme import find_files
 from wn.constants import *
 from wn.constants import wordnet_dir
 from wn.reader import parse_wordnet_line, parse_index_line
+from wn.utils import WordNetError
 
 # Abusing builtins here but this is the only way I can think of.
 # A index that provides the file offset
@@ -50,7 +51,10 @@ class WordNet:
                         synset, lemmas = parse_wordnet_line(line)
                         _synset_offset_cache[synset._pos][synset._offset] = synset
                     except:
-                        print(line)
-                        raise
+                        err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
+                        raise WordNetError(err_msg + line)
+
+    
+
 
 wordnet = WordNet()

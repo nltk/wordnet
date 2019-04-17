@@ -7,19 +7,6 @@ import re
 from collections import defaultdict
 
 ######################################################################
-# Table of Contents
-######################################################################
-# - Constants
-# - Data Classes
-#   - WordNetError
-#   - Lemma
-#   - Synset
-# - WordNet Corpus Reader
-# - WordNet Information Content Corpus Reader
-# - Similarity Metrics
-# - Demo
-
-######################################################################
 # Constants
 ######################################################################
 
@@ -125,10 +112,6 @@ VERB_FRAME_STRINGS = (
 )
 
 SENSENUM_RE = re.compile(r'\.[\d]+\.')
-
-
-class WordNetError(Exception):
-    """An exception class for wordnet-related errors."""
 
 
 def load_exception_map():
