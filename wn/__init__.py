@@ -54,7 +54,14 @@ class WordNet:
                         err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
                         raise WordNetError(err_msg + line)
 
-    
+    def synset_from_pos_and_offset(self, pos, offset):
+        assert pos in POS_LIST, WordNetError('Part-of-Speech should be one of this: {}'.format(POS_LIST))
+        try:
+            return _synset_offset_cache[pos][int(offset)]
+        except:
+            raise WordNetError('Part-of-Speech and Offset combination not found in WordNet')
 
+    def synset_from_sense_key(self, sense_key):
+        pass
 
 wordnet = WordNet()

@@ -17,6 +17,19 @@ class Lemma(WordNetObject):
         ##self._frame_strings = []
         ##self._frame_ids = []
 
+    def init_sensekey(self):
+        # From https://github.com/nltk/nltk/blob/develop/nltk/corpus/reader/wordnet.py#L1495
+        if synset._pos == ADJ_SAT:
+            head_lemma = self.synset().similar_tos()[0]
+            head_name = head_lemma._name
+
+        lemma_key_tuple = (self._name,
+                           self._lexname_index,
+                           self._lex_id,
+
+                          )
+        self._key = ('%s%%%d:%02d:%02d:%s:%s' % tup).lower()
+
     def name(self):
         return self._name
 

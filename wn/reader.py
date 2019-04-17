@@ -42,7 +42,7 @@ def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
         if symbol.isdigit():
             print(symbol, pointer_offset, pointer_pos, lemma_ids_str)
         if lemma_ids_str == '0000':
-            synset_pointers[symbol].add((pointer_pos, pointer_offset))
+            synset_pointers[symbol].add((pointer_pos, int(pointer_offset)))
         else:
             source_index = int(lemma_ids_str[:2], 16) - 1
             target_index = int(lemma_ids_str[2:], 16) - 1
