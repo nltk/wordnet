@@ -1,8 +1,12 @@
 
-
+from collections import deque
 
 class WordNetError(Exception):
     """An exception class for wordnet-related errors."""
+
+class FakeSynset:
+    def __init__(self, name):
+        self._name = name
 
 class WordNetObject(object):
     """A common base class for lemmas and synsets."""
@@ -90,3 +94,23 @@ class WordNetObject(object):
 
     def __lt__(self, other):
         return self._name < other._name
+
+
+def breadth_first(tree, children=iter, maxdepth=-1):
+    """Traverse the nodes of a tree in breadth-first order.
+    (No need to check for cycles.)
+    The first argument should be the tree root;
+    children should be a function taking as argument a tree node
+    and returning an iterator of the node's children.
+    """
+    queue = deque([(tree, 0)])
+
+    while queue:
+        node, depth = queue.popleft()
+        yield node
+
+        if depth != maxdepth:
+            try:
+                queue.extend((c, depth + 1) for c in children(node))
+            except TypeError:
+                pass
