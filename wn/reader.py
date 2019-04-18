@@ -1,11 +1,14 @@
 
 import re
-
+import warnings
 from collections import defaultdict
+
 from lazyme import find_files, per_chunk
 
+from wn.constants import lexnames
 from wn.lemma import Lemma
 from wn.synset import Synset
+from wn.utils import WordNetError
 
 def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
     # Split the network information from the gloss.
@@ -79,7 +82,7 @@ def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
                                     synset_name=synset_name,
                                     lemma_pointers=lemma_pointers))
     # Create the Synset object
-    synset = Synset(offset, pos, first_lemma_name, lexname_index, synset_name,
+    synset = Synset(offset, pos, synset_name, lexname_index, lexnames[lexname_index],
                     definition, examples, synset_pointers, lemmas_objects, wordnet_line)
 
     # Return the important stuff.
@@ -100,8 +103,45 @@ def parse_index_line(index_line):
     synset_offsets = [int(so) for so in synset_offsets]
     return lemma, pos, synset_offsets
 
+def parse_sense_key(sense_key):
+    pass
 
 
+def parse_lemma_pos_index(lemma_pos_index):
+    lemma, pos, synset_index_str = lemma_pos_index.lower().rsplit('.', 2)
+    synset_index = int(synset_index_str) - 1
+    # Get the offset for this synset
+    try:
+        offset = _lemma_pos_offset_map[lemma][pos][synset_index]
+    except KeyError:
+        message = 'no lemma %r with part of speech %r'
+        raise WordNetError(message % (lemma, pos))
+    except IndexError:
+        n_senses = len(_lemma_pos_offset_map[lemma][pos])
+        message = "lemma %r with part of speech %r has only %i %s"
+        message = message % lemma, pos, n_senses, "sense"
+        raise WordNetError(message if n_senses > 1 else message+'s')
+
+    # If it's a confusion between adjective and satellite adjective,
+    # users really doesn't care, so we resolve it and raise warning.
+    if pos in ['a', 's']:
+        # Raise error if user wants an `s` but offset is in `a`,
+        if pos == 's' and offset in _synset_offset_cache['a']:
+            message = (
+                'adjective satellite requested but '
+                'only plain adjective found for lemma %r'
+                )
+            raise WordNetError(message % lemma)
+        # Push warning and change the POS
+        # if user wants an `a` but offset is in `s`,
+        elif pos == 'a' and offset in _synset_offset_cache['s']:
+            message = (
+                'plain adjective requested but '
+                'only adjective satellite found for lemma %r'
+                )
+            warnings.warn(message % lemma)
+            pos = 's' # Edit user specified POS.
+    return pos, offset
 
 
 

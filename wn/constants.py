@@ -17,7 +17,7 @@ _INF = 1e300
 
 # Part of speech constants
 ADJ, ADJ_SAT, ADV, NOUN, VERB = 'a', 's', 'r', 'n', 'v'
-POS_LIST = [NOUN, VERB, ADJ, ADV]
+POS_LIST = [NOUN, VERB, ADJ, ADJ_SAT, ADV]
 _FILEMAP = {ADJ: 'adj', ADV: 'adv', NOUN: 'noun', VERB: 'verb'}
 _pos_numbers = {NOUN: 1, VERB: 2, ADJ: 3, ADV: 4, ADJ_SAT: 5}
 _pos_names = dict(tup[::-1] for tup in _pos_numbers.items())
@@ -169,10 +169,21 @@ def load_lemma_pos_offset_map():
                     lemma_pos_offset_map[lemma][ADJ_SAT] = synset_offsets
     return lemma_pos_offset_map
 
+def load_lexnames():
+    lexnames = []
+    with open(wordnet_dir+'lexnames') as fin:
+        # Load the lexnames
+        for i, line in enumerate(fin):
+            index, lexname, _ = line.split()
+            assert int(index) == i
+            lexnames.append(lexname)
+    return lexnames
+
+
 wordnet_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet/'
 exception_map = load_exception_map()
 lemma_pos_offset_map = load_lemma_pos_offset_map()
-
+lexnames = load_lexnames()
 
 __all__ = [
 '_ENCODING',
@@ -186,4 +197,4 @@ __all__ = [
 'MORPHOLOGICAL_SUBSTITUTIONS',
 'VERB_FRAME_STRINGS',
 'SENSENUM_RE',
-'wordnet_dir', 'exception_map', 'lemma_pos_offset_map']
+'wordnet_dir', 'exception_map', 'lemma_pos_offset_map', 'lexnames']

@@ -7,7 +7,9 @@ from lazyme import find_files
 
 from wn.constants import *
 from wn.constants import wordnet_dir
-from wn.reader import parse_wordnet_line, parse_index_line
+from wn.reader import parse_wordnet_line
+from wn.reader import parse_index_line
+from wn.reader import parse_lemma_pos_index
 from wn.utils import WordNetError
 
 # Abusing builtins here but this is the only way I can think of.
@@ -59,7 +61,16 @@ class WordNet:
         try:
             return _synset_offset_cache[pos][int(offset)]
         except:
-            raise WordNetError('Part-of-Speech and Offset combination not found in WordNet')
+            raise WordNetError('Part-of-Speech and Offset combination not found in WordNet: {} + {}'.format(pos, offset))
+
+    def synset(self, lemma_pos_index):
+        # Parse the lemma_pos_index string.
+        pos, offset = parse_lemma_pos_index(lemma_pos_index)
+        # load synset information from the appropriate file
+        synset = self.synset_from_pos_and_offset(pos, offset)
+
+        # Return the synset object.
+        return synset
 
     def synset_from_sense_key(self, sense_key):
         pass
