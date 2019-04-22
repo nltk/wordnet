@@ -133,7 +133,9 @@ def load_exception_map():
 
 
 def load_lemma_pos_offset_map():
+    """ Not use in this library, kept for reference to NLTK. """
     lemma_pos_offset_map = defaultdict(dict)
+    ##pos_lemma_offset_map = defaultdict(dict)
     for suffix in _FILEMAP.values():
         # parse each line of the file (ignoring comment lines)
         with open(wordnet_dir+'index.%s' % suffix) as fin:
@@ -170,9 +172,11 @@ def load_lemma_pos_offset_map():
 
                 # map lemmas and parts of speech to synsets
                 lemma_pos_offset_map[lemma][pos] = synset_offsets
+                ##pos_lemma_offset_map[pos][lemma] = synset_offsets
                 if pos == ADJ:
                     lemma_pos_offset_map[lemma][ADJ_SAT] = synset_offsets
-    return lemma_pos_offset_map
+                    ##pos_lemma_offset_map[ADJ_SAT][lemma] = synset_offsets
+    return lemma_pos_offset_map##, pos_lemma_offset_map
 
 def load_lexnames():
     lexnames = []
@@ -187,8 +191,9 @@ def load_lexnames():
 
 wordnet_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet/'
 wordnet_ic_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet_ic/'
+omw_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/omw/'
 exception_map = load_exception_map()
-lemma_pos_offset_map = load_lemma_pos_offset_map()
+##lemma_pos_offset_map = load_lemma_pos_offset_map()
 lexnames = load_lexnames()
 
 __all__ = [
@@ -204,6 +209,6 @@ __all__ = [
 'MORPHOLOGICAL_SUBSTITUTIONS',
 'VERB_FRAME_STRINGS',
 'SENSENUM_RE',
-'wordnet_dir', 'wordnet_ic_dir',
-'exception_map', 'lemma_pos_offset_map', 'lexnames',
+'wordnet_dir', 'wordnet_ic_dir', 'omw_dir',
+'exception_map', 'lexnames',
 'WN_MAX_DEPTH']

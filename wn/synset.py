@@ -84,7 +84,6 @@ class Synset(WordNetObject):
                 lemmark.append(lemma)
             return lemmark
 
-
     def lemma_names(self, lang='eng'):
         if lang == 'eng':
             return [l._name for l in self._lemmas]
