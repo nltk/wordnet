@@ -11,6 +11,7 @@ from wn.path import WordNetPaths
 from wn.reader import parse_wordnet_line
 from wn.reader import parse_index_line
 from wn.reader import parse_lemma_pos_index
+from wn.reader import parse_sense_key
 from wn.utils import WordNetError, FakeSynset
 
 # Abusing builtins here but this is the only way I can think of.
@@ -91,45 +92,7 @@ class WordNet(WordNetPaths):
             return list_of_synsets
 
     def synset_from_sense_key(self, sense_key):
-        """
-        Retrieves synset based on a given sense_key. Sense keys can be
-        obtained from lemma.key()
-        From https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html:
-        A sense_key is represented as:
-            lemma % lex_sense (e.g. 'dog%1:18:01::')
-        where lex_sense is encoded as:
-            ss_type:lex_filenum:lex_id:head_word:head_id
-
-        lemma:      ASCII text of word/collocation, in lower case
-        ss_type:    synset type for the sense (1 digit int)
-                    The synset type is encoded as follows:
-                    1    NOUN
-                    2    VERB
-                    3    ADJECTIVE
-                    4    ADVERB
-                    5    ADJECTIVE SATELLITE
-        lex_filenum: name of lexicographer file containing the synset for the sense (2 digit int)
-        lex_id:      when paired with lemma, uniquely identifies a sense in the lexicographer file (2 digit int)
-        head_word:   lemma of the first word in satellite's head synset
-                     Only used if sense is in an adjective satellite synset
-        head_id:     uniquely identifies sense in a lexicographer file when paired with head_word
-                     Only used if head_word is present (2 digit int)
-        """
-        sense_key_regex = re.compile(r"(.*)\%(.*):(.*):(.*):(.*):(.*)")
-        lemma, ss_type, _, lex_id, _, _ = sense_key_regex.match(sense_key).groups()
-        # check that information extracted from sense_key is valid
-        error = None
-        if not lemma:
-            error = "lemma"
-        elif int(ss_type) not in _synset_types:
-            error = "ss_type"
-        elif int(lex_id) < 0 or int(lex_id) > 99:
-            error = "lex_id"
-        if error:
-            raise WordNetError(
-                "valid {} could not be extracted from the sense key".format(error)
-                )
-        pos = _synset_types[int(ss_type)]
+        lemma, pos, lex_id = parse_sense_key(sense_key)
         synset_id = '.'.join([lemma, pos, lex_id])
         return self.synset(synset_id)
 
