@@ -14,7 +14,7 @@ from wn.reader import parse_lemma_pos_index
 from wn.reader import parse_sense_key
 from wn.utils import WordNetError, FakeSynset
 
-from wn.info import WordNetInformationContent
+from wn.info import InformationContentSimilarities
 
 # Abusing builtins here but this is the only way I can think of.
 # A index that provides the file offset
@@ -25,7 +25,7 @@ __builtins__['_lemma_pos_offset_map'] = defaultdict(dict)
 __builtins__['_synset_offset_cache'] = defaultdict(dict)
 
 
-class WordNet(WordNetPaths):
+class WordNet(WordNetPaths, InformationContentSimilarities):
     def __init__(self):
         self._load_lemma_pos_offset_map()
         self._load_all_synsets()
