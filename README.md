@@ -40,7 +40,6 @@ Synset('dog.n.01')
 
 
 >>> wordnet_ic = WordNetInformationContent(corpus='bnc', resnik=True, add1=True)
->>> wordnet.res_similarity(dog, cat, wordnet_ic)
 
 >>> wordnet.res_similarity(dog, cat, wordnet_ic)
 7.66654127408746
