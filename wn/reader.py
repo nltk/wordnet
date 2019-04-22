@@ -10,7 +10,7 @@ from wn.synset import Synset
 from wn.utils import WordNetError
 from wn.utils import per_chunk
 
-def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
+def parse_wordnet_line(wordnet_line, parse_verb_frame=False, lexname_type=None):
     # Split the network information from the gloss.
     columns_str, gloss = wordnet_line.strip().split('|')
     # Extract the definition and examples from the gloss.
@@ -27,11 +27,14 @@ def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
     lemma_tokens = the_rest[:n_lemmas*2]
     lemmas = []
     for lemma_name, lex_id in per_chunk(lemma_tokens, 2):
-        # If the lemma has a syntactic marker, extract it.
-        m = re.match(r'(.*?)(\(.*\))?$', lemma_name)
-        lemma_name, syn_mark = m.groups()
         lex_id = int(lex_id, 16)
-        lemmas.append((lemma_name, lexname_index, lex_id, syn_mark))
+        # If lemma matches any in the `_lemma_pos_offset_map`
+        if lemma_name.lower() in _lemma_pos_offset_map:
+            lemmas.append((lemma_name, lexname_index, lex_id, None))
+        else: # Else, if the lemma has a syntactic marker, extract it.
+            m = re.match(r'(.*?)(\(.*\))?$', lemma_name)
+            lemma_name, syn_mark = m.groups()
+            lemmas.append((lemma_name, lexname_index, lex_id, syn_mark))
 
     # Find the synset and lemma connections.
     synset_pointers = defaultdict(set)
@@ -83,7 +86,8 @@ def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
                                     synset_name=synset_name,
                                     lemma_pointers=lemma_pointers))
     # Create the Synset object
-    synset = Synset(offset, pos, synset_name, lexname_index, lexnames[lexname_index],
+    _lexname = str(lexname_index) if lexname_type == 'clusters' else lexnames[lexname_index]
+    synset = Synset(offset, pos, synset_name, lexname_index, _lexname,
                     definition, examples, synset_pointers, lemmas_objects, wordnet_line)
 
     # Return the important stuff.

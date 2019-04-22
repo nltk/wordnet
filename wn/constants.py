@@ -189,6 +189,7 @@ def load_lexnames():
     return lexnames
 
 
+wn_data_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/'
 wordnet_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet/'
 wordnet_ic_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet_ic/'
 omw_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/omw/'
@@ -209,6 +210,7 @@ __all__ = [
 'MORPHOLOGICAL_SUBSTITUTIONS',
 'VERB_FRAME_STRINGS',
 'SENSENUM_RE',
+'wn_data_dir',
 'wordnet_dir', 'wordnet_ic_dir', 'omw_dir',
 'exception_map', 'lexnames',
 'WN_MAX_DEPTH']
