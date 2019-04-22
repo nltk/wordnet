@@ -11,8 +11,10 @@ pip install -U wn
 # Use
 
 ```python
->>> from wn import wordnet
+>>> from wn import WordNet
 >>> from wn.info import WordNetInformationContent
+
+>>> wordnet = WordNet()
 
 >>> wordnet.synsets('dog')
 [Synset('dog.n.01'), Synset('frump.n.01'), Synset('dog.n.03'), Synset('cad.n.01'), Synset('frank.n.02'), Synset('pawl.n.01'), Synset('andiron.n.01'), Synset('chase.v.01')]

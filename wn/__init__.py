@@ -27,7 +27,7 @@ __builtins__['_synset_offset_cache'] = defaultdict(dict)
 __builtins__['_lang_to_offsets_to_lemma'] = defaultdict(dict)
 __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
     def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None):
@@ -225,5 +225,3 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
             self._max_depth[version][True][_pos] = depth + 1
             self._max_depth[version][False][_pos] = depth
         return self._max_depth[version][simulate_root][pos]
-
-wordnet = WordNet()
