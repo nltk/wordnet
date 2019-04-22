@@ -30,7 +30,9 @@ __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 __version__ = '0.0.3'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
-    def __init__(self):
+    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None):
+        self.wordnet_data_dir = wordnet_data_dir
+        self.lexname_type = lexname_type
         # Initializes the `_lemma_pos_offset_map` and `_pos_lemma_offset_map`
         # from wn.constants.
         self._load_lemma_pos_offset_map()
@@ -46,7 +48,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
 
     def _load_lemma_pos_offset_map(self):
         for pos_tag in _FILEMAP.values():
-            filename = os.path.join(wordnet_dir, 'index.{}'.format(pos_tag))
+            filename = os.path.join(self.wordnet_data_dir, 'index.{}'.format(pos_tag))
             with open(filename) as fin:
                 for line in fin:
                     if line.startswith(' '):
@@ -59,13 +61,13 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
 
     def _load_all_synsets(self):
         for pos_tag in _FILEMAP.values():
-            filename = os.path.join(wordnet_dir, 'data.{}'.format(pos_tag))
+            filename = os.path.join(self.wordnet_data_dir, 'data.{}'.format(pos_tag))
             with open(filename) as fin:
                 for line in fin:
                     if line.startswith(' '):
                         continue
                     try:
-                        synset, lemmas = parse_wordnet_line(line)
+                        synset, lemmas = parse_wordnet_line(line, lexname_type=self.lexname_type)
                         _synset_offset_cache[synset._pos][synset._offset] = synset
                     except:
                         err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
@@ -186,7 +188,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         return depth
 
     def get_version(self):
-        filename = wordnet_dir+'/data.adj'
+        filename = self.wordnet_data_dir+'/data.adj'
         with open(filename) as fin:
             for line in fin:
                 match = re.search(r'WordNet (\d+\.\d+) Copyright', line)
@@ -223,19 +225,5 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
             self._max_depth[version][True][_pos] = depth + 1
             self._max_depth[version][False][_pos] = depth
         return self._max_depth[version][simulate_root][pos]
-
-
-    def add_synset_from_wordnet_line(self, wordnet_line, overwrite=False):
-        try:
-            synset, lemmas = parse_wordnet_line(line)
-        except:
-            raise WordNetError('Invalid wordnet line.')
-
-        if synset._offset in _synset_offset_cache[synset._pos] and not overwrite:
-            raise WordNetError(str('Offset {} already exist in wordnet. '
-                                   'Use overwrite=True to overwrite.').format(synset._offset)
-
-        _synset_offset_cache[synset._pos][synset._offset] = synset
-        _lemma_pos_offset_map[lemma][pos] = [synset.offset]
 
 wordnet = WordNet()
