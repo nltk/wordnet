@@ -73,7 +73,6 @@ class Synset(WordNetObject):
             for lemma_name in self.lemma_names(lang):
                 _name = lemma_name
                 _lexname_index = _lex_id = 0
-
                 _syntactic_marker = None
                 _synset_name = self._name
                 _synset_offset = self._offset

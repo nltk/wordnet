@@ -150,6 +150,19 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         """return lemmas of the given language as list of words"""
         return self.all_lemma_names(lang=lang)
 
+    def lemma(self, name, lang='eng'):
+        '''Return lemma object that matches the name'''
+        # cannot simply split on first '.',
+        # e.g.: '.45_caliber.a.01..45_caliber'
+        separator = SENSENUM_RE.search(name).end()
+        synset_name, lemma_name = name[: separator - 1], name[separator:]
+
+        synset = self.synset(synset_name)
+        for lemma in synset.lemmas(lang):
+            if lemma._name == lemma_name:
+                return lemma
+        raise WordNetError('no lemma %r in %r' % (lemma_name, synset_name))
+
     def _compute_max_depth_once(self, pos, simulate_root):
         """
         Compute the max depth for the given part of speech.  This is
