@@ -22,6 +22,10 @@ _FILEMAP = {ADJ: 'adj', ADV: 'adv', NOUN: 'noun', VERB: 'verb'}
 _pos_numbers = {NOUN: 1, VERB: 2, ADJ: 3, ADV: 4, ADJ_SAT: 5}
 _pos_names = dict(tup[::-1] for tup in _pos_numbers.items())
 
+# Max depth by WN version, simulate_root, and POS.
+WN_MAX_DEPTH = {'3.0': {False: {'n': 19, 'v': 12, 'a': 0, 'r': 0},
+                        True:  {'n': 20, 'v': 13, 'a': 1, 'r': 1}}
+                }
 
 #: A list of file identifiers for all the fileids used by wordnet.
 _FILES = (
@@ -197,4 +201,5 @@ __all__ = [
 'MORPHOLOGICAL_SUBSTITUTIONS',
 'VERB_FRAME_STRINGS',
 'SENSENUM_RE',
-'wordnet_dir', 'exception_map', 'lemma_pos_offset_map', 'lexnames']
+'wordnet_dir', 'exception_map', 'lemma_pos_offset_map', 'lexnames',
+'WN_MAX_DEPTH']

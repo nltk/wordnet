@@ -201,33 +201,6 @@ class Synset(WordNetObject):
             tree += [cut_mark]
         return tree
 
-    def shortest_path_distance(self, other, simulate_root=False):
-        """
-        Returns the distance of the shortest path linking the two synsets (if
-        one exists). For each synset, all the ancestor nodes and their
-        distances are recorded and compared. The ancestor node common to both
-        synsets that can be reached with the minimum number of traversals is
-        used. If no ancestor nodes are common, None is returned. If a node is
-        compared with itself 0 is returned.
-        :type other: Synset
-        :param other: The Synset to which the shortest path will be found.
-        :return: The number of edges in the shortest path connecting the two
-        nodes, or None if no path exists.
-        """
-        if self == other:
-            return 0
-        # Find the shortest hypernym path to *ROOT*
-        dist_dict1 = wn.path.find_shortest_hypernym_paths(self, simulate_root)
-        dist_dict2 = wn.path.find_shortest_hypernym_paths(other, simulate_root)
-        # For each ancestor synset common to both subject synsets, find the
-        # connecting path length. Return the shortest of these.
-        inf = float('inf')
-        path_distance = inf
-        for synset, d1 in dist_dict1.items():
-            d2 = dist_dict2.get(synset, inf)
-            path_distance = min(path_distance, d1 + d2)
-        return None if math.isinf(path_distance) else path_distance
-
     def hypernym_distances(self, distance=0, simulate_root=False):
         """
         Get the path(s) from this synset to the root, counting the distance

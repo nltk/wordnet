@@ -1,12 +1,13 @@
 
 import os
+import re
 from collections import defaultdict
 
 from tqdm import tqdm
 from lazyme import find_files
 
 from wn.constants import *
-from wn.constants import wordnet_dir
+from wn.path import WordNetPaths
 from wn.reader import parse_wordnet_line
 from wn.reader import parse_index_line
 from wn.reader import parse_lemma_pos_index
@@ -21,7 +22,7 @@ __builtins__['_lemma_pos_offset_map'] = defaultdict(dict)
 __builtins__['_synset_offset_cache'] = defaultdict(dict)
 
 
-class WordNet:
+class WordNet(WordNetPaths):
     def __init__(self):
         self._load_lemma_pos_offset_map()
         self._load_all_synsets()
@@ -92,69 +93,85 @@ class WordNet:
     def synset_from_sense_key(self, sense_key):
         pass
 
-    def common_hypernyms(self, synset1, synset2):
+    def all_synsets(self, pos=None):
+        """Iterate over all synsets with a given part of speech tag.
+        If no pos is specified, all synsets for all parts of speech
+        will be loaded.
         """
-        Find all synsets that are hypernyms of this synset and the
-        other synset.
-        :return: The synsets that are hypernyms of both synsets.
-        """
-        return list(synset1.hypernyms_set().intersection(synset2.hypernyms_set()))
+        pos_tags = _FILEMAP.keys() if pos is None else [pos]
 
-    def lowest_common_hypernyms(self, synset1, synset2,
-                                simulate_root=False, use_min_depth=False):
+        for _pos in pos_tags:
+            for offset, ss in _synset_offset_cache[_pos].items():
+                yield ss
+
+    def all_lemma_names(self, pos=None, lang='eng'):
+        if lang == 'eng':
+            if pos is None:
+                for lemma_name in _lemma_pos_offset_map:
+                    if pos in _lemma_pos_offset_map[lemma]:
+                        yield lemma_name
+
+    def words(self, lang='lang'):
+        """return lemmas of the given language as list of words"""
+        return self.all_lemma_names(lang=lang)
+
+    def _compute_max_depth_once(self, pos, simulate_root):
         """
-        Get a list of lowest synset(s) that both synsets have as a hypernym.
-        When `use_min_depth == False` this means that the synset which appears
-        as a hypernym of both `self` and `other` with the lowest maximum depth
-        is returned or if there are multiple such synsets at the same depth
-        they are all returned
-        However, if `use_min_depth == True` then the synset(s) which has/have
-        the lowest minimum depth and appear(s) in both paths is/are returned.
-        By setting the use_min_depth flag to True, the behavior of NLTK2 can be
-        preserved. This was changed in NLTK3 to give more accurate results in a
-        small set of cases, generally with synsets concerning people. (eg:
-        'chef.n.01', 'fireman.n.01', etc.)
-        This method is an implementation of Ted Pedersen's "Lowest Common
-        Subsumer" method from the Perl Wordnet module. It can return either
-        "self" or "other" if they are a hypernym of the other.
-        :type other: Synset
-        :param other: other input synset
-        :type simulate_root: bool
-        :param simulate_root: The various verb taxonomies do not
-            share a single root which disallows this metric from working for
-            synsets that are not connected. This flag (False by default)
-            creates a fake root that connects all the taxonomies. Set it
-            to True to enable this behavior. For the noun taxonomy,
-            there is usually a default root except for WordNet version 1.6.
-            If you are using wordnet 1.6, a fake root will need to be added
-            for nouns as well.
-        :type use_min_depth: bool
-        :param use_min_depth: This setting mimics older (v2) behavior of NLTK
-            wordnet If True, will use the min_depth function to calculate the
-            lowest common hypernyms. This is known to give strange results for
-            some synset pairs (eg: 'chef.n.01', 'fireman.n.01') but is retained
-            for backwards compatibility
-        :return: The synsets that are the lowest common hypernyms of both
-            synsets
+        Compute the max depth for the given part of speech.  This is
+        used by the lch similarity metric.
+
+        This function should never be used!!!
+        It should be computed once, then put into wn.constants.
         """
-        synsets = synset1.common_hypernyms(synset2)
+        depth = 0
+        for ss in self.all_synsets(pos):
+            try:
+                depth = max(depth, ss.max_depth())
+            except RuntimeError:
+                _msg = '{} throws error when searching for max_depth'.format(ss)
+                raise WordNetError(_msg)
         if simulate_root:
-            fake_synset = FakeSynset(None)
-            fake_synset._name = '*ROOT*'
-            fake_synset.hypernyms = lambda: []
-            fake_synset.instance_hypernyms = lambda: []
-            synsets.append(fake_synset)
+            depth += 1
+        return depth
 
-        try:
-            if use_min_depth:
-                max_depth = max(s.min_depth() for s in synsets)
-                unsorted_lch = [s for s in synsets if s.min_depth() == max_depth]
-            else:
-                max_depth = max(s.max_depth() for s in synsets)
-                unsorted_lch = [s for s in synsets if s.max_depth() == max_depth]
-            return sorted(unsorted_lch)
-        except ValueError:
-            return []
+    def get_version(self):
+        filename = wordnet_dir+'/data.adj'
+        with open(filename) as fin:
+            for line in fin:
+                match = re.search(r'WordNet (\d+\.\d+) Copyright', line)
+                if match:
+                    self._version = match.group(1)
+                    return self._version
+        raise WordNetError("Cannot find version number in {}".format(filename))
+
+    def version(self):
+        if hasattr(self, '_version'):
+            return self._version
+        return self.get_version()
+
+    def _compute_max_depth(self, pos, simulate_root):
+        """
+        Compute the max depth for the given part of speech.  This is
+        used by the lch similarity metric.
+        """
+        pos = 'a' if pos == 's' else pos
+        # Try to fetch wordnet's max_depth from constants.
+        version = self.version()
+        #if version in WN_MAX_DEPTH or hasattr(self, '_max_depth'):
+        #    self._max_depth = WN_MAX_DEPTH
+        #    return self._max_depth[version][simulate_root][pos]
+
+        # Compute the _wn_max_depth for this wordnet version for the first time.
+        self._max_depth = {version: {True: {}, False: {}}}
+        for _pos in POS_LIST:
+            if _pos == 's': # Skips the satellite adjective.
+                continue
+            depth = self._max_depth[version][False][_pos] = 0
+            for ss in self.all_synsets(_pos):
+                depth = max(depth, ss.max_depth())
+            self._max_depth[version][True][_pos] = depth + 1
+            self._max_depth[version][False][_pos] = depth
+        return self._max_depth[version][simulate_root][pos]
 
 
 wordnet = WordNet()
