@@ -142,36 +142,3 @@ def parse_lemma_pos_index(lemma_pos_index):
             warnings.warn(message % lemma)
             pos = 's' # Edit user specified POS.
     return pos, offset
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #

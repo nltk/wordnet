@@ -21,6 +21,7 @@ POS_LIST = [NOUN, VERB, ADJ, ADJ_SAT, ADV]
 _FILEMAP = {ADJ: 'adj', ADV: 'adv', NOUN: 'noun', VERB: 'verb'}
 _pos_numbers = {NOUN: 1, VERB: 2, ADJ: 3, ADV: 4, ADJ_SAT: 5}
 _pos_names = dict(tup[::-1] for tup in _pos_numbers.items())
+_synset_types = {1: NOUN, 2: VERB, 3: ADJ, 4: ADV, 5: ADJ_SAT}
 
 # Max depth by WN version, simulate_root, and POS.
 WN_MAX_DEPTH = {'3.0': {False: {'n': 19, 'v': 12, 'a': 0, 'r': 0},
@@ -197,6 +198,7 @@ __all__ = [
 '_FILEMAP',
 '_pos_numbers',
 '_pos_names',
+'_synset_types',
 '_FILES',
 'MORPHOLOGICAL_SUBSTITUTIONS',
 'VERB_FRAME_STRINGS',
