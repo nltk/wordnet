@@ -37,17 +37,18 @@ class Lemma(WordNetObject):
         """
         if hasattr(self, '_key'):
             return self._key
-        if synset._pos == 's':
+        if self._synset_pos == 's':
             ss = _synset_offset_cache[self._synset_pos][self._synset_offset]
             head_lemma = ss.similar_tos()[0]._lemmas[0]
             head_name = head_lemma._name
-            head_id = '%02d' % head_lemma._lex_id
+            head_id = '%02d' % int(head_lemma._lex_id)
         else:
             head_name = head_id = ''
-        sense_key_tuple = tuple(self._name, _pos_numbers[self._synset_pos],
-                                self._lexname_index, self._lex_id,
-                                head_name, head_id)
-        self._key = ('%s%%%d:%02d:%02d:%s:%s' % tup).lower()
+        sense_key_tuple = (self._name, _pos_numbers[self._synset_pos],
+                           int(self._lexname_index), int(self._lex_id),
+                           head_name, head_id)
+        self._key = ('%s%%%d:%02d:%02d:%s:%s' % sense_key_tuple).lower()
+        return self._key
 
     def name(self):
         return self._name
@@ -63,9 +64,6 @@ class Lemma(WordNetObject):
 
     def lang(self):
         return self._lang
-
-    def key(self):
-        return self._key
 
     def __repr__(self):
         tup = type(self).__name__, self._synset_name, self._name

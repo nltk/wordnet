@@ -1,6 +1,7 @@
 
 import math
 from itertools import chain
+from operator import itemgetter
 from collections import defaultdict
 
 import wn.path
@@ -9,7 +10,7 @@ from wn.lemma import Lemma
 from wn.morphy import morphy
 from wn.omw import OpenMultilingualWordNet as OMW
 from wn.utils import WordNetObject, WordNetError
-from wn.utils import breadth_first
+from wn.utils import breadth_first, FakeSynset
 
 class Synset(WordNetObject):
     def __init__(self, offset, pos, name, lexname_index, lexname,
@@ -94,8 +95,14 @@ class Synset(WordNetObject):
                 # Load it up.
                 _lang_to_offsets_to_lemma[lang] = offsets_to_lemmas
                 _lang_to_lemmas_to_offsets[lang] = lemmas_to_offsets
+
             # Return the list of lemmas from the OMW cache.
-            return _lang_to_offsets_to_lemma[lang][self._pos][self._offset]
+            if self._pos in _lang_to_offsets_to_lemma[lang]:
+                return _lang_to_offsets_to_lemma[lang][self._pos][self._offset]
+            elif self._pos == 's' and 'a' in _lang_to_offsets_to_lemma[lang]:
+                return _lang_to_offsets_to_lemma[lang]['a'][self._offset]
+            else:
+                return []
 
     def _related(self, relation_symbol, sort=True):
         if relation_symbol not in self._pointers:
@@ -250,7 +257,7 @@ class Synset(WordNetObject):
         for hypernym in self._hypernyms() + self._instance_hypernyms():
             distances |= hypernym.hypernym_distances(distance + 1, simulate_root=False)
         if simulate_root:
-            fake_synset = Synset(None)
+            fake_synset = FakeSynset(None)
             fake_synset._name = '*ROOT*'
             fake_synset_distance = max(distances, key=itemgetter(1))[1]
             distances.add((fake_synset, fake_synset_distance + 1))

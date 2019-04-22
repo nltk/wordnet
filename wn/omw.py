@@ -30,8 +30,10 @@ class OpenMultilingualWordNet:
             with open(omw_dir+'/{lang}/wn-data-{lang}.tab'.format(lang=lang)) as fin:
                 next(fin) # Skip first line.
                 for line in fin:
+                    if line.startswith('#'): # Skip commented lines.
+                        continue
                     offset, pos, lemma_type, lemma = parse_omw_line(line)
-                    lemma = lemma.replace(' ', '_')
+                    lemma = lemma.strip().replace(' ', '_')
                     offsets_to_lemmas[pos][offset].append(lemma)
                     lemmas_to_offsets[pos][lemma.lower()].append(offset)
         except FileNotFoundError:

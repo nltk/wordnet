@@ -40,6 +40,9 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
 
         self._synset_offset_cache = _synset_offset_cache
         self._lemma_pos_offset_map = _lemma_pos_offset_map
+        
+        self._lang_to_offsets_to_lemma = _lang_to_offsets_to_lemma
+        self._lang_to_lemmas_to_offsets = _lang_to_lemmas_to_offsets
 
     def _load_lemma_pos_offset_map(self):
         for pos_tag in _FILEMAP.values():
@@ -58,7 +61,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         for pos_tag in _FILEMAP.values():
             filename = os.path.join(wordnet_dir, 'data.{}'.format(pos_tag))
             with open(filename) as fin:
-                for line in tqdm(fin):
+                for line in fin:
                     if line.startswith(' '):
                         continue
                     try:

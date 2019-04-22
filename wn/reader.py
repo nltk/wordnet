@@ -31,6 +31,7 @@ def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
         # If the lemma has a syntactic marker, extract it.
         m = re.match(r'(.*?)(\(.*\))?$', lemma_name)
         lemma_name, syn_mark = m.groups()
+        lex_id = int(lex_id, 16)
         lemmas.append((lemma_name, lexname_index, lex_id, syn_mark))
 
     # Find the synset and lemma connections.
