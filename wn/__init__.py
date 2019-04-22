@@ -224,4 +224,18 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
             self._max_depth[version][False][_pos] = depth
         return self._max_depth[version][simulate_root][pos]
 
+
+    def add_synset_from_wordnet_line(self, wordnet_line, overwrite=False):
+        try:
+            synset, lemmas = parse_wordnet_line(line)
+        except:
+            raise WordNetError('Invalid wordnet line.')
+
+        if synset._offset in _synset_offset_cache[synset._pos] and not overwrite:
+            raise WordNetError(str('Offset {} already exist in wordnet. '
+                                   'Use overwrite=True to overwrite.').format(synset._offset)
+
+        _synset_offset_cache[synset._pos][synset._offset] = synset
+        _lemma_pos_offset_map[lemma][pos] = [synset.offset]
+
 wordnet = WordNet()
