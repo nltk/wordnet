@@ -1,0 +1,40 @@
+This data is formatted by the Open Multilingual Wordnet Project
+http://compling.hss.ntu.edu.sg/omw/
+to be used by NLTK.
+
+Please cite us if you find the aggregation useful (see citation.bib)
+and email us if you have any suggestions.
+
+Francis Bond (bond@ieee.org)
+2015-09-24
+
+
+27 languages covered (and we assume you have English):
+als
+arb
+bul
+cat
+cmn
+dan
+ell
+eus
+fas
+fin
+fra
+glg
+heb
+hrv
+ind
+ita
+jpn
+nno
+nob
+pol
+por
+qcn
+slv
+spa
+swe
+tha
+zsm 
+
