@@ -3,13 +3,12 @@ import re
 import warnings
 from collections import defaultdict
 
-from lazyme import find_files, per_chunk
-
 from wn.constants import lexnames
 from wn.constants import _synset_types
 from wn.lemma import Lemma
 from wn.synset import Synset
 from wn.utils import WordNetError
+from wn.utils import per_chunk
 
 def parse_wordnet_line(wordnet_line, parse_verb_frame=False):
     # Split the network information from the gloss.

@@ -6,8 +6,6 @@ Tests for Synset and Lemma objects.
 
 import unittest
 
-from tqdm import tqdm
-
 from wn import wordnet as our_wn
 from wn.info import WordNetInformationContent
 
@@ -16,7 +14,7 @@ class TestAllSynsets(unittest.TestCase):
     def test_all_synsets(self):
         from nltk.corpus import wordnet as nltk_wn
         our_wn_synsets = our_wn.all_synsets()
-        for nltk_ss in tqdm(nltk_wn.all_synsets()):
+        for nltk_ss in nltk_wn.all_synsets():
             our_ss = our_wn.synset(nltk_ss.name())
             # Test Synset attributes.
             assert nltk_ss.name() == our_ss.name()

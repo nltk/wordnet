@@ -1,6 +1,11 @@
 
 from collections import deque
 
+try:
+    from itertools import zip_longest
+except ImportError:
+    from itertools import izip_longest as zip_longest
+
 class WordNetError(Exception):
     """An exception class for wordnet-related errors."""
 
@@ -114,3 +119,15 @@ def breadth_first(tree, children=iter, maxdepth=-1):
                 queue.extend((c, depth + 1) for c in children(node))
             except TypeError:
                 pass
+
+
+def per_chunk(iterable, n=1, fillvalue=None):
+    """
+    From http://stackoverflow.com/a/8991553/610569
+        >>> list(per_chunk('abcdefghi', n=2))
+        [('a', 'b'), ('c', 'd'), ('e', 'f'), ('g', 'h'), ('i', None)]
+        >>> list(per_chunk('abcdefghi', n=3))
+        [('a', 'b', 'c'), ('d', 'e', 'f'), ('g', 'h', 'i')]
+    """
+    args = [iter(iterable)] * n
+    return zip_longest(*args, fillvalue=fillvalue)

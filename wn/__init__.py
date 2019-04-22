@@ -4,9 +4,6 @@ import re
 from itertools import chain
 from collections import defaultdict
 
-from tqdm import tqdm
-from lazyme import find_files
-
 from wn.constants import *
 from wn.info import InformationContentSimilarities
 from wn.path import WordNetPaths
@@ -40,7 +37,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
 
         self._synset_offset_cache = _synset_offset_cache
         self._lemma_pos_offset_map = _lemma_pos_offset_map
-        
+
         self._lang_to_offsets_to_lemma = _lang_to_offsets_to_lemma
         self._lang_to_lemmas_to_offsets = _lang_to_lemmas_to_offsets
 
