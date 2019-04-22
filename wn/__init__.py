@@ -7,6 +7,7 @@ from collections import defaultdict
 from wn.constants import *
 from wn.info import InformationContentSimilarities
 from wn.path import WordNetPaths
+from wn.morphy import morphy
 from wn.omw import OpenMultilingualWordNet
 from wn.reader import parse_wordnet_line
 from wn.reader import parse_index_line
@@ -103,9 +104,9 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         if lang == 'eng':
             list_of_synsets = []
             for p in pos_tags:
-                for form in morphy(lemma, p, check_exceptions):
-                    for offset in _lemma_pos_offset_map[form].get(p, []):
-                        list_of_synsets.append(_synset_offset_cache[p][offset])
+                form = morphy(lemma, p, check_exceptions)
+                for offset in _lemma_pos_offset_map[form].get(p, []):
+                    list_of_synsets.append(_synset_offset_cache[p][offset])
             return list_of_synsets
         else:
             # Tries to cache the OMW for the first time if not used before.

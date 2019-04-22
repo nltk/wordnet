@@ -15,19 +15,6 @@ def morphy(form, pos=None, check_exceptions=True):
     part of speech, by checking WordNet's list of exceptional
     forms, and by recursively stripping affixes for this part of
     speech until a form in WordNet is found.
-    >>> from pywsd.morphy import morphy
-    >>> print(morphy('dogs'))
-    dog
-    >>> print(morphy('churches'))
-    church
-    >>> print(morphy('aardwolves'))
-    aardwolf
-    >>> print(morphy('abaci'))
-    abacus
-    >>> morphy('hardrock', ADV)
-    >>> print(morphy('book', NOUN))
-    book
-    >>> morphy('book', wn.ADJ)
     """
 
     if pos is None:
@@ -67,8 +54,8 @@ def _morphy(form, pos, check_exceptions=True):
         result = []
         seen = set()
         for form in forms:
-            if form in lemma_pos_offset_map:
-                if pos in lemma_pos_offset_map[form]:
+            if form in _lemma_pos_offset_map:
+                if pos in _lemma_pos_offset_map[form]:
                     if form not in seen:
                         result.append(form)
                         seen.add(form)
