@@ -14,6 +14,8 @@ from wn.reader import parse_lemma_pos_index
 from wn.reader import parse_sense_key
 from wn.utils import WordNetError, FakeSynset
 
+from wn.info import WordNetInformationContent
+
 # Abusing builtins here but this is the only way I can think of.
 # A index that provides the file offset
 # Map from lemma -> pos -> synset_index -> offset

@@ -104,6 +104,7 @@ def parse_index_line(index_line):
     synset_offsets = [int(so) for so in synset_offsets]
     return lemma, pos, synset_offsets
 
+
 def parse_sense_key(sense_key):
     """
     Retrieves synset based on a given sense_key. Sense keys can be
@@ -182,3 +183,14 @@ def parse_lemma_pos_index(lemma_pos_index):
             warnings.warn(message % lemma)
             pos = 's' # Edit user specified POS.
     return pos, offset
+
+
+def parse_wordnet_ic_line(ic_line):
+    offset, value, *has_root = ic_line.strip().split()
+    pos, has_root = offset[-1], bool(has_root)
+    offset, value = int(offset[:-1]), float(value)
+    if pos not in ['n', 'v']:
+        raise WordNetError("Unidentified part of speech in "
+                           "WordNet Information Content "
+                           "file for field {}".format(line))
+    return offset, value, pos, has_root
