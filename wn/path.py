@@ -6,7 +6,10 @@ from wn.utils import FakeSynset
 from wn.constants import WN_MAX_DEPTH
 
 def find_root_hypernyms(synset):
-    """Get the topmost hypernyms of this synset in WordNet."""
+    """
+    Note: Not used anywhere in this library, keeping it for reference to NLTK.
+    Get the topmost hypernyms of this synset in WordNet.
+    """
     result = []
     seen = set()
     todo = [synset]
