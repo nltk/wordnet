@@ -5,7 +5,9 @@ from collections import defaultdict
 
 import wn.path
 from wn.constants import *
+from wn.lemma import Lemma
 from wn.morphy import morphy
+from wn.omw import OpenMultilingualWordNet as OMW
 from wn.utils import WordNetObject, WordNetError
 from wn.utils import breadth_first
 
@@ -58,10 +60,44 @@ class Synset(WordNetObject):
         '''Return all the lemma objects associated with the synset'''
         if lang == 'eng':
             return self._lemmas
+        else:
+            if lang not in _lang_to_lemmas_to_offsets.keys():
+                # If not in cache, temporarily create an OMW object.
+                # Get the mappings from the staticmethod `custom_lemmas()`
+                offsets_to_lemmas, lemmas_to_offsets = OMW.custom_lemmas(lang)
+                # Load it up.
+                _lang_to_offsets_to_lemma[lang] = offsets_to_lemmas
+                _lang_to_lemmas_to_offsets[lang] = lemmas_to_offsets
+            # Return the list of lemmas from the OMW cache.
+            lemmark = []
+            for lemma_name in self.lemma_names(lang):
+                _name = lemma_name
+                _lexname_index = _lex_id = 0
+
+                _syntactic_marker = None
+                _synset_name = self._name
+                _synset_offset = self._offset
+                _synset_pos = self._pos
+                lemma = Lemma(_name, _lexname_index, _lex_id, _syntactic_marker,
+                              _synset_offset, _synset_pos, _synset_name,
+                              lemma_pointers=None, lang=lang)
+                lemmark.append(lemma)
+            return lemmark
+
 
     def lemma_names(self, lang='eng'):
         if lang == 'eng':
             return [l._name for l in self._lemmas]
+        else:
+            if lang not in _lang_to_lemmas_to_offsets.keys():
+                # If not in cache, temporarily create an OMW object.
+                # Get the mappings from the staticmethod `custom_lemmas()`
+                offsets_to_lemmas, lemmas_to_offsets = OMW.custom_lemmas(lang)
+                # Load it up.
+                _lang_to_offsets_to_lemma[lang] = offsets_to_lemmas
+                _lang_to_lemmas_to_offsets[lang] = lemmas_to_offsets
+            # Return the list of lemmas from the OMW cache.
+            return _lang_to_offsets_to_lemma[lang][self._pos][self._offset]
 
     def _related(self, relation_symbol, sort=True):
         if relation_symbol not in self._pointers:

@@ -1,20 +1,22 @@
 
 import os
 import re
+from itertools import chain
 from collections import defaultdict
 
 from tqdm import tqdm
 from lazyme import find_files
 
 from wn.constants import *
+from wn.info import InformationContentSimilarities
 from wn.path import WordNetPaths
+from wn.omw import OpenMultilingualWordNet
 from wn.reader import parse_wordnet_line
 from wn.reader import parse_index_line
 from wn.reader import parse_lemma_pos_index
 from wn.reader import parse_sense_key
 from wn.utils import WordNetError, FakeSynset
 
-from wn.info import InformationContentSimilarities
 
 # Abusing builtins here but this is the only way I can think of.
 # A index that provides the file offset
@@ -23,11 +25,17 @@ __builtins__['_lemma_pos_offset_map'] = defaultdict(dict)
 # A cache so we don't have to reconstuct synsets
 # Map from pos -> offset -> synset
 __builtins__['_synset_offset_cache'] = defaultdict(dict)
+# A cache to store the wordnet data of multiple languages
+__builtins__['_lang_to_offsets_to_lemma'] = defaultdict(dict)
+__builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 
-
-class WordNet(WordNetPaths, InformationContentSimilarities):
+class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
     def __init__(self):
+        # Initializes the `_lemma_pos_offset_map` and `_pos_lemma_offset_map`
+        # from wn.constants.
         self._load_lemma_pos_offset_map()
+        # Initializes the `_synset_offset_cache`
+        # from wn.constants.
         self._load_all_synsets()
 
         self._synset_offset_cache = _synset_offset_cache
@@ -62,9 +70,14 @@ class WordNet(WordNetPaths, InformationContentSimilarities):
 
     def synset_from_pos_and_offset(self, pos, offset):
         assert pos in POS_LIST, WordNetError('Part-of-Speech should be one of this: {}'.format(POS_LIST))
+        offset = int(offset)
         try:
-            return _synset_offset_cache[pos][int(offset)]
+            return _synset_offset_cache[pos][offset]
         except:
+            if pos == 's' and offset in _synset_offset_cache['a']:
+                return _synset_offset_cache['a'][offset]
+            if pos == 'a' and offset in _synset_offset_cache['s']:
+                return _synset_offset_cache['s'][offset]
             raise WordNetError('Part-of-Speech and Offset combination not found in WordNet: {} + {}'.format(pos, offset))
 
     def synset(self, lemma_pos_index):
@@ -84,14 +97,27 @@ class WordNet(WordNetPaths, InformationContentSimilarities):
         of that language will be returned.
         """
         lemma = lemma.lower()
-        pos = POS_LIST if pos == None else pos
+        pos_tags = POS_LIST if pos == None else [pos]
         if lang == 'eng':
             list_of_synsets = []
-            for p in pos:
+            for p in pos_tags:
                 for form in morphy(lemma, p, check_exceptions):
                     for offset in _lemma_pos_offset_map[form].get(p, []):
                         list_of_synsets.append(_synset_offset_cache[p][offset])
             return list_of_synsets
+        else:
+            # Tries to cache the OMW for the first time if not used before.
+            self._load_lang_data(lang)
+            # Iterate through the _lang_to_lemmas_to_offsets to get the offsets.
+            list_of_offsets = []
+            for p in pos_tags:
+                if p == 's': # Skips the 's' tag.
+                    continue
+                if lemma in _lang_to_lemmas_to_offsets[lang][p]:
+                    for offset in _lang_to_lemmas_to_offsets[lang][p][lemma]:
+                        list_of_offsets.append((p, offset))
+            return [self.synset_from_pos_and_offset(p, offset)
+                    for p, offset in set(list_of_offsets)]
 
     def synset_from_sense_key(self, sense_key):
         lemma, pos, lex_id = parse_sense_key(sense_key)
@@ -111,10 +137,14 @@ class WordNet(WordNetPaths, InformationContentSimilarities):
 
     def all_lemma_names(self, pos=None, lang='eng'):
         if lang == 'eng':
-            if pos is None:
-                for lemma_name in _lemma_pos_offset_map:
-                    if pos in _lemma_pos_offset_map[lemma]:
-                        yield lemma_name
+            for lemma_name in _lemma_pos_offset_map:
+                if pos in _lemma_pos_offset_map[lemma_name] or pos == None:
+                    yield lemma_name
+        else:
+            # Tries to cache the OMW for the first time if not used before.
+            self._load_lang_data(lang)
+            for lemma_name in _lang_to_lemmas_to_offsets[lang][pos]:
+                yield lemma_name
 
     def words(self, lang='lang'):
         """return lemmas of the given language as list of words"""
@@ -162,9 +192,9 @@ class WordNet(WordNetPaths, InformationContentSimilarities):
         pos = 'a' if pos == 's' else pos
         # Try to fetch wordnet's max_depth from constants.
         version = self.version()
-        #if version in WN_MAX_DEPTH or hasattr(self, '_max_depth'):
-        #    self._max_depth = WN_MAX_DEPTH
-        #    return self._max_depth[version][simulate_root][pos]
+        if version in WN_MAX_DEPTH or hasattr(self, '_max_depth'):
+            self._max_depth = WN_MAX_DEPTH
+            return self._max_depth[version][simulate_root][pos]
 
         # Compute the _wn_max_depth for this wordnet version for the first time.
         self._max_depth = {version: {True: {}, False: {}}}
@@ -177,6 +207,5 @@ class WordNet(WordNetPaths, InformationContentSimilarities):
             self._max_depth[version][True][_pos] = depth + 1
             self._max_depth[version][False][_pos] = depth
         return self._max_depth[version][simulate_root][pos]
-
 
 wordnet = WordNet()

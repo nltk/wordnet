@@ -5,12 +5,12 @@ from wn.utils import WordNetObject
 class Lemma(WordNetObject):
     def __init__(self, name, lexname_index, lex_id, syntactic_marker,
                  synset_offset=None, synset_pos=None,
-                 synset_name=None, lemma_pointers=None):
+                 synset_name=None, lemma_pointers=None, lang='eng'):
         self._name = name
         self._syntactic_marker = syntactic_marker
         self._lexname_index = lexname_index
         self._lex_id = lex_id
-        self._lang = 'eng'
+        self._lang = lang
         self._synset_offset = synset_offset
         self._synset_pos = synset_pos
         self._synset_name = synset_name
@@ -45,7 +45,7 @@ class Lemma(WordNetObject):
                           )
         return ('%s%%%d:%02d:%02d:%s:%s' % lemma_key_tuple).lower()
     """
-    
+
     def name(self):
         return self._name
 
