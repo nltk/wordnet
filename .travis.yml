@@ -1,0 +1,25 @@
+sudo: false
+
+language: python
+
+dist: xenial
+
+addons:
+  apt:
+    packages:
+      - expect-dev
+
+python:
+  - "3.5"
+  - "3.6"
+
+cache: pip
+
+install:
+  - pip install nltk     # Using six dependency for text_type()
+
+script:
+  - python -m nltk.downloader wordnet
+  - python -m nltk.downloader wordnet_ic
+  - python -m nltk.downloader omw
+  - unbuffer python -m unittest discover sacremoses/test/ -v

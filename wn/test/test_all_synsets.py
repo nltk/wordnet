@@ -6,11 +6,13 @@ Tests for Synset and Lemma objects.
 
 import unittest
 
-from wn import wordnet as our_wn
+from wn import WordNet
 from wn.info import WordNetInformationContent
 
+our_wn = WordNet()
+
 class TestAllSynsets(unittest.TestCase):
-    @unittest.skip("Paranoid sanity checks...")
+    ##@unittest.skip("Paranoid sanity checks...")
     def test_all_synsets(self):
         from nltk.corpus import wordnet as nltk_wn
         our_wn_synsets = our_wn.all_synsets()

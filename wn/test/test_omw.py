@@ -6,8 +6,9 @@ Tests for OMW lemmas.
 
 import unittest
 
-from wn import wordnet as our_wn
+from wn import WordNet
 
+our_wn = WordNet()
 
 class TestOMWLemmas(unittest.TestCase):
     def test_all_lemma_names(self):

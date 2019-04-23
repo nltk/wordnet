@@ -6,7 +6,8 @@ Tests for morphy.
 
 import unittest
 
-from wn import wordnet as our_wn
+from wn import WordNet
+
 from wn.morphy import morphy
 
 class TestMorphy(unittest.TestCase):
@@ -16,6 +17,5 @@ class TestMorphy(unittest.TestCase):
         assert morphy('aardwolves') == 'aardwolf'
         assert morphy('abaci') == 'abacus'
         assert morphy('hardrock', 'r') == None
-        assert morphy('book', 'n') == []
+        assert morphy('book', 'n') == 'book'
         assert morphy('book', 'a') == None
-    
