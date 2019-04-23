@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 from wn.constants import _pos_numbers
 from wn.utils import WordNetObject
