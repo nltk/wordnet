@@ -1,4 +1,7 @@
+# !/usr/bin/env python 
+# -*- coding: utf-8 -*-
 
+import io
 import os
 import re
 from itertools import chain
@@ -51,7 +54,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
     def _load_lemma_pos_offset_map(self):
         for pos_tag in _FILEMAP.values():
             filename = os.path.join(self.wordnet_data_dir, 'index.{}'.format(pos_tag))
-            with open(filename) as fin:
+            with io.open(filename, encoding='utf8') as fin:
                 for line in fin:
                     if line.startswith(' '):
                         continue
@@ -70,7 +73,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
     def _load_all_synsets(self):
         for pos_tag in _FILEMAP.values():
             filename = os.path.join(self.wordnet_data_dir, 'data.{}'.format(pos_tag))
-            with open(filename) as fin:
+            with io.open(filename, encoding='utf8') as fin:
                 for line in fin:
                     # Skip documentation and empty lines.
                     if line.startswith(' ') or not line.strip():
@@ -198,7 +201,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
 
     def get_version(self):
         filename = self.wordnet_data_dir+'/data.adj'
-        with open(filename) as fin:
+        with io.open(filename, encoding='utf8') as fin:
             for line in fin:
                 match = re.search(r'WordNet (\d+\.\d+) Copyright', line)
                 if match:

@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 
+import io
 import os
 from collections import defaultdict
 
@@ -27,7 +29,7 @@ class OpenMultilingualWordNet:
         offsets_to_lemmas = defaultdict(lambda: defaultdict(list))
         lemmas_to_offsets = defaultdict(lambda: defaultdict(list))
         try:
-            with open(omw_dir+'/{lang}/wn-data-{lang}.tab'.format(lang=lang)) as fin:
+            with io.open(omw_dir+'/{lang}/wn-data-{lang}.tab'.format(lang=lang), encoding='utf8') as fin:
                 next(fin) # Skip first line.
                 for line in fin:
                     if line.startswith('#'): # Skip commented lines.
