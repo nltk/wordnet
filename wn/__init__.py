@@ -9,6 +9,7 @@ from wn.info import InformationContentSimilarities
 from wn.path import WordNetPaths
 from wn.morphy import morphy
 from wn.omw import OpenMultilingualWordNet
+from wn.reader import fix_inconsistent_line
 from wn.reader import parse_wordnet_line
 from wn.reader import parse_index_line
 from wn.reader import parse_lemma_pos_index
@@ -30,9 +31,10 @@ __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 __version__ = '0.0.4'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
-    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None):
+    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=False):
         self.wordnet_data_dir = wordnet_data_dir
         self.lexname_type = lexname_type
+        self.wordnet_33 = wordnet_33
         # Initializes the `_lemma_pos_offset_map` and `_pos_lemma_offset_map`
         # from wn.constants.
         self._load_lemma_pos_offset_map()
@@ -53,7 +55,13 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
                 for line in fin:
                     if line.startswith(' '):
                         continue
-                    lemma, pos, synset_offsets = parse_index_line(line)
+                    try:
+                        lemma, pos, synset_offsets = parse_index_line(line)
+                    except: # When there's inconsistencies.
+                        if self.wordnet_33:
+                            lemma, pos, synset_offsets = parse_index_line(fix_inconsistent_line(line))
+                        else:
+                            raise WordNetError('Error parsing:\n{}\nfrom {}'.format(line, filename))
                     # Cache the map.
                     _lemma_pos_offset_map[lemma][pos] = synset_offsets
                     if pos == 'a':
@@ -64,7 +72,8 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
             filename = os.path.join(self.wordnet_data_dir, 'data.{}'.format(pos_tag))
             with open(filename) as fin:
                 for line in fin:
-                    if line.startswith(' '):
+                    # Skip documentation and empty lines.
+                    if line.startswith(' ') or not line.strip():
                         continue
                     try:
                         synset, lemmas = parse_wordnet_line(line, lexname_type=self.lexname_type)

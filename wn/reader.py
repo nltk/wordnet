@@ -94,6 +94,23 @@ def parse_wordnet_line(wordnet_line, parse_verb_frame=False, lexname_type=None):
     return synset, lemmas_objects
 
 
+def fix_inconsistent_line(index_line):
+    """ Fix inconsistent line in WordNet 3.3 """
+    # Get the lemma and part-of-speech, no. of synsets and no. of pointers.
+    lemma, pos, n_synsets, n_pointers, *the_rest = index_line.split()
+    n_synsets, n_pointers = int(n_synsets), int(n_pointers)
+    assert n_synsets > 0
+    # Ignore the no. of pointers.
+    # and ignore number of senses ranked according to frequency.
+    pointers= the_rest[:-(n_synsets+2)]
+    n_pointers = len(pointers)
+    n_senses, not_used , *synset_offsets = the_rest[-(n_synsets+2):]
+    n_senses = int(n_senses)
+    assert n_senses == n_synsets, '{} {}'.format(n_senses, index_line)
+    return ' '.join(map(str, [lemma, pos, n_synsets, n_pointers, ' '.join(pointers),
+                     n_senses, not_used, ' '.join(synset_offsets)]))
+
+
 def parse_index_line(index_line):
     # Get the lemma and part-of-speech, no. of synsets and no. of pointers.
     lemma, pos, n_synsets, n_pointers, *the_rest = index_line.split()
