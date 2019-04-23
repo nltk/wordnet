@@ -15,7 +15,11 @@ environment:
 install:
   # We need wheel installed to build wheels
   - "%PYTHON%\\python.exe -m pip install wheel"
+  - "%PYTHON%\\python.exe -m pip install nltk" # For testing only.
   ##- "%PYTHON%\\python.exe -m pip install -r requirements.txt"
+  - "%PYTHON%\\python.exe -m nltk.downloader wordnet"
+  - "%PYTHON%\\python.exe -m nltk.downloader wordnet_ic"
+  - "%PYTHON%\\python.exe -m nltk.downloader omw"
 
 build: off
 
