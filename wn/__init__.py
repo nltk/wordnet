@@ -1,4 +1,4 @@
-# !/usr/bin/env python 
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import io
@@ -120,7 +120,8 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
             for p in pos_tags:
                 form = morphy(lemma, p, check_exceptions)
                 for offset in _lemma_pos_offset_map[form].get(p, []):
-                    list_of_synsets.append(_synset_offset_cache[p][offset])
+                    if offset in _synset_offset_cache[p]:
+                        list_of_synsets.append(_synset_offset_cache[p][offset])
             return list_of_synsets
         else:
             # Tries to cache the OMW for the first time if not used before.
