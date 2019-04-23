@@ -22,4 +22,4 @@ script:
   - python -m nltk.downloader wordnet
   - python -m nltk.downloader wordnet_ic
   - python -m nltk.downloader omw
-  - unbuffer python -m unittest discover sacremoses/test/ -v
+  - unbuffer python -m unittest discover wn/test/ -v
