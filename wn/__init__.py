@@ -78,12 +78,12 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
                     # Skip documentation and empty lines.
                     if line.startswith(' ') or not line.strip():
                         continue
-                    #try:
-                    synset, lemmas = parse_wordnet_line(line, lexname_type=self.lexname_type)
-                    _synset_offset_cache[synset._pos][synset._offset] = synset
-                    #except:
-                    #    err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
-                    #    raise WordNetError(err_msg + line)
+                    try:
+                        synset, lemmas = parse_wordnet_line(line, lexname_type=self.lexname_type)
+                        _synset_offset_cache[synset._pos][synset._offset] = synset
+                    except:
+                        err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
+                        raise WordNetError(err_msg + line)
 
     def synset_from_pos_and_offset(self, pos, offset):
         assert pos in POS_LIST, WordNetError('Part-of-Speech should be one of this: {}'.format(POS_LIST))
