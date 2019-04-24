@@ -34,9 +34,9 @@ __builtins__['_lang_to_offsets_to_lemma'] = defaultdict(dict)
 __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 
 # Map from sensekey -> count
-__builtins__['_lemmakey_to_count'] = defaultdict(dict)
+__builtins__['_lemmakey_to_count'] = {}
 
-__version__ = '0.0.17'
+__version__ = '0.0.18'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
     def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=False):
@@ -99,7 +99,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         with open(filename) as fin:
             for line in fin:
                 lemma_key, _, count = line.strip().split()
-                _lemmakey_to_count[lemma_key] = count
+                _lemmakey_to_count[lemma_key] = int(count)
 
     def synset_from_pos_and_offset(self, pos, offset):
         assert pos in POS_LIST, WordNetError('Part-of-Speech should be one of this: {}'.format(POS_LIST))
