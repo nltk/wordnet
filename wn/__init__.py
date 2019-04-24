@@ -36,7 +36,7 @@ __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 # Map from sensekey -> count
 __builtins__['_lemmakey_to_count'] = defaultdict(dict)
 
-__version__ = '0.0.15'
+__version__ = '0.0.16'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
     def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=False):
