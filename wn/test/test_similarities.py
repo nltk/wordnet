@@ -17,8 +17,8 @@ class TestSimilarities(unittest.TestCase):
         nltk_dog = nltk_wn.synset('dog.n.1')
 
 
-        our_run = wn.synset('run.v.1')
-        our_dog = wn.synset('dog.n.1')
+        our_run = our_wn.synset('run.v.1')
+        our_dog = our_wn.synset('dog.n.1')
 
         assert nltk_wn.path_similarity(nltk_run, nltk_dog) ==  our_wn.path_similarity(our_run, our_dog)
         assert nltk_wn.wup_similarity(nltk_run, nltk_dog) ==  our_wn.wup_similarity(our_run, our_dog)
@@ -29,8 +29,8 @@ class TestSimilarities(unittest.TestCase):
         nltk_cat = nltk_wn.synset('cat.n.01')
         nltk_buy = nltk_wn.synset('buy.v.01')
 
-        our_cat = wn.synset('cat.v.1')
-        our_buy = wn.synset('buy.n.1')
+        our_cat = our_wn.synset('cat.v.1')
+        our_buy = our_wn.synset('buy.n.1')
         # path_sim(cat, buy)
         assert nltk_wn.path_similarity(nltk_cat, nltk_buy) ==  our_wn.path_similarity(our_cat, our_buy)
         assert nltk_wn.wup_similarity(nltk_cat, nltk_buy) ==  our_wn.wup_similarity(our_cat, our_buy)
@@ -44,9 +44,9 @@ class TestSimilarities(unittest.TestCase):
         nltk_dog = nltk_wn.synset('dog.n.1')
         nltk_bus = nltk_wn.synset('bus.n.1')
 
-        our_cat = wn.synset('cat.n.1')
-        our_dog = wn.synset('dog.n.1')
-        our_bus = wn.synset('bus.n.1')
+        our_cat = our_wn.synset('cat.n.1')
+        our_dog = our_wn.synset('dog.n.1')
+        our_bus = our_wn.synset('bus.n.1')
         assert nltk_wn.path_similarity(nltk_cat, nltk_dog) ==  our_wn.path_similarity(our_cat, our_dog)
         assert nltk_wn.wup_similarity(nltk_cat, nltk_dog) ==  our_wn.wup_similarity(our_cat, our_dog)
         assert nltk_wn.lch_similarity(nltk_cat, nltk_dog) ==  our_wn.lch_similarity(our_cat, our_dog)
