@@ -31,7 +31,7 @@ __builtins__['_synset_offset_cache'] = defaultdict(dict)
 __builtins__['_lang_to_offsets_to_lemma'] = defaultdict(dict)
 __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 
-__version__ = '0.0.10'
+__version__ = '0.0.11'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
     def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=False):
@@ -122,6 +122,12 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
                 for offset in _lemma_pos_offset_map[form].get(p, []):
                     if offset in _synset_offset_cache[p]:
                         list_of_synsets.append(_synset_offset_cache[p][offset])
+                    else:
+                        if pos == 's' and offset in _synset_offset_cache['a']:
+                            list_of_synsets.append(_synset_offset_cache['a'][offset])
+                        elif pos == 'a' and offset in _synset_offset_cache['s']:
+                            list_of_synsets.append(_synset_offset_cache['s'][offset])
+
             return list_of_synsets
         else:
             # Tries to cache the OMW for the first time if not used before.
