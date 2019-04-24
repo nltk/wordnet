@@ -12,7 +12,25 @@ class WordNetError(Exception):
 
 class FakeSynset:
     def __init__(self, name):
-        self._name = name
+        self._name = '*ROOT*'
+        self._min_depth = self._max_depth = 0
+        self.hypernyms = lambda: []
+        self.instance_hypernyms = lambda: []
+
+    def min_depth(self):
+        return self._min_depth
+
+    def max_depth(self):
+        return self._max_depth
+
+    def __eq__(self, other):
+        return True if other._name == self._name else False
+
+    def __hash__(self):
+        return hash(self._name)
+
+    def __repr__(self):
+        return "%s('%s')" % (type(self).__name__, self._name)
 
 class WordNetObject(object):
     """A common base class for lemmas and synsets."""
