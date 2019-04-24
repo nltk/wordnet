@@ -1,5 +1,8 @@
 # wordnet
 
+[![Build Status](https://travis-ci.org/alvations/wordnet.svg?branch=master)](https://travis-ci.org/alvations/wordnet)
+[![Build status](https://ci.appveyor.com/api/projects/status/x3set7qdxkudkcv6?svg=true)](https://ci.appveyor.com/project/alvations/wordnet)
+
 
 # Install
 
