@@ -3,7 +3,7 @@
 import math
 from collections import deque
 
-from wn.utils import FakeSynset
+from wn.utils import FakeSynset, WordNetError
 from wn.constants import WN_MAX_DEPTH
 
 def find_root_hypernyms(synset):
