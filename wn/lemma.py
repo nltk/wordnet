@@ -57,7 +57,7 @@ class Lemma(WordNetObject):
         if self._lang != 'eng' and self.key() in _lemmakey_to_count:
             self._count = 0
         else:
-            self._count = _lemmakey_to_count[self.key()]
+            self._count = int(_lemmakey_to_count[self.key()])
         return self._count
 
     def name(self):
