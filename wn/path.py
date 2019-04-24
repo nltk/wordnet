@@ -144,7 +144,8 @@ class WordNetPaths:
             path_distance = min(path_distance, d1 + d2)
         return None if math.isinf(path_distance) else path_distance
 
-    def path_similarity(self, synset1, synset2, verbose=False, simulate_root=True):
+    def path_similarity(self, synset1, synset2, verbose=False, simulate_root=True,
+                        if_none_return=None):
         """
         Path Distance Similarity:
         Return a score denoting how similar two word senses are, based on the
@@ -172,7 +173,7 @@ class WordNetPaths:
         distance = self.shortest_path_distance(synset1, synset2,
             simulate_root=simulate_root and synset1._needs_root())
         if distance is None or distance < 0:
-            return None
+            return if_none_return
         return 1.0 / (distance + 1)
 
     def _compute_max_depth(self, pos, simulate_root):
@@ -191,7 +192,8 @@ class WordNetPaths:
         self._max_depth[pos] = depth
 
     def lch_similarity(self, synset1, synset2,
-                       simulate_root=True, _max_depth=None):
+                       simulate_root=True, _max_depth=None,
+                       if_none_return=None):
         """
         Leacock Chodorow Similarity:
         Return a score denoting how similar two word senses are, based on the
@@ -234,11 +236,12 @@ class WordNetPaths:
                         simulate_root=need_root)
 
         if distance is None or distance < 0 or depth == 0:
-            return None
+            return if_none_return
         return -math.log((distance + 1) / (2.0 * depth))
 
     def wup_similarity(self, synset1, synset2,
-                       verbose=False, simulate_root=True):
+                       verbose=False, simulate_root=True,
+                       if_none_return=None):
         """
         Wu-Palmer Similarity:
         Return a score denoting how similar two word senses are, based on the
@@ -283,7 +286,7 @@ class WordNetPaths:
 
         # If no LCS was found return None
         if len(subsumers) == 0:
-            return None
+            return if_none_return
 
         subsumer = synset1 if synset1 in subsumers else subsumers[0]
 
@@ -307,7 +310,7 @@ class WordNetPaths:
         len2 = self.shortest_path_distance(synset2, subsumer,
                 simulate_root=simulate_root and need_root)
         if len1 is None or len2 is None:
-            return None
+            return if_none_return
         len1 += depth
         len2 += depth
         return (2.0 * depth) / (len1 + len2)
