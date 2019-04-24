@@ -36,9 +36,9 @@ class WordNetInformationContent:
 
 class InformationContentSimilarities:
     def information_content(self, synset, ic):
-        try:
+        if synset._pos in ic.ic and ic.ic[synset._pos]:
             icpos = ic.ic[synset._pos]
-        except KeyError:
+        else:
             msg = 'Information content file has no entries for part-of-speech: %s'
             raise WordNetError(msg % synset._pos)
         counts = icpos[synset._offset]
