@@ -229,6 +229,12 @@ class WordNetPaths:
         # Ultimately the synset's need_root and simulate_root decides
         # whether root is really needed
         need_root = synset1._needs_root() and simulate_root
+        # Hack to handle adjective and adverbs where _needs_root() returns None.
+        if need_root == None:
+            if if_none_return:
+                need_root = True
+            else: # Emulate NLTK's behavior to return None.
+                return if_none_return
         # FIXME: how to make subclass overwrite values in kwargs?
         # By default use the static value from wn.constants
         depth = _max_depth if _max_depth else WN_MAX_DEPTH['3.0'][need_root][synset1._pos]
