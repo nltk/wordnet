@@ -23,14 +23,20 @@ class FakeSynset:
     def max_depth(self):
         return self._max_depth
 
-    def __eq__(self, other):
-        return True if other._name == self._name else False
+    def __repr__(self):
+        return "%s('%s')" % (type(self).__name__, self._name)
 
     def __hash__(self):
         return hash(self._name)
 
-    def __repr__(self):
-        return "%s('%s')" % (type(self).__name__, self._name)
+    def __eq__(self, other):
+        return self._name == other._name
+
+    def __ne__(self, other):
+        return self._name != other._name
+
+    def __lt__(self, other):
+        return self._name < other._name
 
 class WordNetObject(object):
     """A common base class for lemmas and synsets."""
