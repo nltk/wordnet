@@ -29,8 +29,8 @@ class TestSimilarities(unittest.TestCase):
         nltk_cat = nltk_wn.synset('cat.n.01')
         nltk_buy = nltk_wn.synset('buy.v.01')
 
-        our_cat = our_wn.synset('cat.v.1')
-        our_buy = our_wn.synset('buy.n.1')
+        our_cat = our_wn.synset('cat.n.1')
+        our_buy = our_wn.synset('buy.v.1')
         # path_sim(cat, buy)
         assert nltk_wn.path_similarity(nltk_cat, nltk_buy) ==  our_wn.path_similarity(our_cat, our_buy)
         assert nltk_wn.wup_similarity(nltk_cat, nltk_buy) ==  our_wn.wup_similarity(our_cat, our_buy)
