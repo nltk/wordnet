@@ -54,7 +54,9 @@ class Lemma(WordNetObject):
     def count(self):
         if hasattr(self, '_count'):
             return self._count
-        if self._lang != 'eng' or self.key() not in _lemmakey_to_count:
+        if self._lang != 'eng':
+            self._count = 0
+        elif self.key() not in _lemmakey_to_count:
             self._count = 0
         else:
             self._count = _lemmakey_to_count[self.key()]
