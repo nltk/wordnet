@@ -94,7 +94,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
                         err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
                         raise WordNetError(err_msg + line)
 
-    def _load_all_lemma_counts():
+    def _load_all_lemma_counts(self):
         filename = os.path.join(self.wordnet_data_dir, 'cntlist.rev')
         with open(filename) as fin:
             for line in fin:
