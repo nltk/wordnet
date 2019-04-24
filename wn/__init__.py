@@ -22,16 +22,21 @@ from wn.utils import WordNetError, FakeSynset
 
 # Abusing builtins here but this is the only way I can think of.
 # A index that provides the file offset
+
 # Map from lemma -> pos -> synset_index -> offset
 __builtins__['_lemma_pos_offset_map'] = defaultdict(dict)
 # A cache so we don't have to reconstuct synsets
 # Map from pos -> offset -> synset
 __builtins__['_synset_offset_cache'] = defaultdict(dict)
+
 # A cache to store the wordnet data of multiple languages
 __builtins__['_lang_to_offsets_to_lemma'] = defaultdict(dict)
 __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 
-__version__ = '0.0.12'
+# Map from sensekey -> count
+__builtins__['_lemmakey_to_count'] = defaultdict(dict)
+
+__version__ = '0.0.13'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
     def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=False):
@@ -44,12 +49,16 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         # Initializes the `_synset_offset_cache`
         # from wn.constants.
         self._load_all_synsets()
+        # Initialize all lemma's count.
+        self._load_lemma_counts()
 
         self._synset_offset_cache = _synset_offset_cache
         self._lemma_pos_offset_map = _lemma_pos_offset_map
 
         self._lang_to_offsets_to_lemma = _lang_to_offsets_to_lemma
         self._lang_to_lemmas_to_offsets = _lang_to_lemmas_to_offsets
+
+        self._lemmakey_to_count = _lemmakey_to_count
 
     def _load_lemma_pos_offset_map(self):
         for pos_tag in _FILEMAP.values():
@@ -84,6 +93,13 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
                     except:
                         err_msg = "Error parsing this line from {}:\n".format('data.{}'.format(pos_tag))
                         raise WordNetError(err_msg + line)
+
+    def _load_all_lemma_counts():
+        filename = os.path.join(self.wordnet_data_dir, 'cntlist.rev')
+        with open(filename) as fin:
+            for line in fin:
+                lemma_key, _, count = line.strip().split()
+                _lemmakey_to_count[lemma_key] = count
 
     def synset_from_pos_and_offset(self, pos, offset):
         assert pos in POS_LIST, WordNetError('Part-of-Speech should be one of this: {}'.format(POS_LIST))

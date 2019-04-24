@@ -51,6 +51,15 @@ class Lemma(WordNetObject):
         self._key = ('%s%%%d:%02d:%02d:%s:%s' % sense_key_tuple).lower()
         return self._key
 
+    def count(self):
+        if hasattr(self, '_count'):
+            return self._count
+        if self._lang != 'eng' and if self.key() in _lemmakey_to_count:
+            self._count = 0
+        else:
+            self._count = _lemmakey_to_count[self.key()]
+        return self._count
+
     def name(self):
         return self._name
 
