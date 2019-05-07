@@ -39,7 +39,7 @@ __builtins__['_lemmakey_to_count'] = {}
 __version__ = '0.0.19'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
-    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=False):
+    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=True):
         self.wordnet_data_dir = wordnet_data_dir
         self.lexname_type = lexname_type
         self.wordnet_33 = wordnet_33
