@@ -9,7 +9,9 @@ import unittest
 from wn import WordNet
 from wn.info import WordNetInformationContent
 
-our_wn = WordNet()
+from wn.constants import wordnet_30_dir
+
+our_wn = WordNet(wordnet_30_dir)
 
 class TestAllSynsets(unittest.TestCase):
     ##@unittest.skip("Paranoid sanity checks...")
