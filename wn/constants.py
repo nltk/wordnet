@@ -189,7 +189,8 @@ def load_lexnames():
 
 
 wn_data_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/'
-wordnet_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet/'
+wordnet_dir = wordnet_33_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet-3.3/'
+wordnet_30_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet-3.0/'
 wordnet_ic_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/wordnet_ic/'
 omw_dir = os.path.dirname(os.path.abspath(__file__)) + '/data/omw/'
 exception_map = load_exception_map()

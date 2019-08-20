@@ -10,7 +10,7 @@ from distutils.core import setup
 
 setup(
     name='wn',
-    version='0.0.19',
+    version='0.0.20',
     packages=['wn'],
     description='Wordnet',
     long_description='',

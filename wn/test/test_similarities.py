@@ -7,8 +7,9 @@ Tests for OMW lemmas.
 import unittest
 
 from wn import WordNet
+from wn.constants import wordnet_30_dir
 
-our_wn = WordNet()
+our_wn = WordNet(wordnet_30_dir)
 
 class TestSimilarities(unittest.TestCase):
     def test_path_similarities_simulate_root(self):
