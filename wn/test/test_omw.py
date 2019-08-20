@@ -24,4 +24,5 @@ class TestOMWLemmas(unittest.TestCase):
                 try:
                     assert our_lemma_names == nltk_lemma_names
                 except AssertionError: # We should have more than what NLTK can fetch.
+                    print(nltk_ss, our_ss)
                     assert len(set(our_lemma_names).difference(nltk_lemma_names)) > 0
