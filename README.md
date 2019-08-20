@@ -17,7 +17,8 @@ pip install -U wn
 >>> from wn import WordNet
 >>> from wn.info import WordNetInformationContent
 
->>> wordnet = WordNet()
+>>> from wn.constants import wordnet_30_dir, wordnet_33_dir
+>>> wordnet = WordNet(wordnet_30_dir) # Uses WordNet v3.0 to be comparable to NLTK, by default uses v3.3
 
 >>> wordnet.synsets('dog')
 [Synset('dog.n.01'), Synset('frump.n.01'), Synset('dog.n.03'), Synset('cad.n.01'), Synset('frank.n.02'), Synset('pawl.n.01'), Synset('andiron.n.01'), Synset('chase.v.01')]
