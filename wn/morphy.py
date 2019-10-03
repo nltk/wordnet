@@ -1,8 +1,11 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2019-2020 NLTK Project
+# Author:
+# URL: <http://nltk.org/>
+# For license information, see LICENSE.TXT
 
-#############################################################
-# Morphy: adapted from Oliver Steele's pywordnet
-#############################################################
+""" Morphy: adapted from Oliver Steele's pywordnet """
 
 from itertools import chain, islice
 

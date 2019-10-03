@@ -16,7 +16,7 @@ python:
 cache: pip
 
 install:
-  - pip install nltk     # Using six dependency for text_type()
+  - pip install nltk==3.4.5   # For testing against old NLTK's wordnet interface.
 
 script:
   - python -m nltk.downloader wordnet
