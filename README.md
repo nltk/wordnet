@@ -56,7 +56,7 @@ Synset('dog.n.01')
 
 # With NLTK
 
-As a comparison, this is the interface from NLTK
+As a comparison, this is the interface from NLTK v3.4.5
 
 ```python
 >>> from nltk.corpus import wordnet
