@@ -126,7 +126,7 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         # Return the synset object.
         return synset
 
-    def synsets(self, lemma, pos=None, lang='eng', check_exceptions=True):
+    def synsets(self, lemma, pos=None, lang='eng', check_exceptions=True, use_morphy=True):
         """
         Load all synsets with a given lemma and part of speech tag.
         If no pos is specified, all synsets for all parts of speech
@@ -139,8 +139,15 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
         if lang == 'eng':
             list_of_synsets = []
             for p in pos_tags:
-                form = morphy(lemma, p, check_exceptions)
-                for offset in _lemma_pos_offset_map[form].get(p, []):
+                # Tries to first fetch offsets using the lemma
+                offsets = _lemma_pos_offset_map[lemma].get(p, [])
+                # If no offsets is fetched from lemma and use_morphy is True.
+                # Fetch offsets using morphy lemmatized word.
+                if not offsets and use_morphy:
+                    form = morphy(lemma, p, check_exceptions)
+                    offsets = _lemma_pos_offset_map[offset].get(p, [])
+                # Iterate through the offsets to append the Synset objects.
+                for offset in offsets:
                     if offset in _synset_offset_cache[p]:
                         list_of_synsets.append(_synset_offset_cache[p][offset])
                     else:
