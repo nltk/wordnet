@@ -41,13 +41,12 @@ __builtins__['_lang_to_lemmas_to_offsets'] = defaultdict(dict)
 # Map from sensekey -> count
 __builtins__['_lemmakey_to_count'] = {}
 
-__version__ = '0.0.22'
+__version__ = '0.0.23'
 
 class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWordNet):
-    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None, wordnet_33=True):
+    def __init__(self, wordnet_data_dir=wordnet_dir, lexname_type=None):
         self.wordnet_data_dir = wordnet_data_dir
         self.lexname_type = lexname_type
-        self.wordnet_33 = wordnet_33
         # Initializes the `_lemma_pos_offset_map` and `_pos_lemma_offset_map`
         # from wn.constants.
         self._load_lemma_pos_offset_map()
@@ -75,10 +74,10 @@ class WordNet(WordNetPaths, InformationContentSimilarities, OpenMultilingualWord
                     try:
                         lemma, pos, synset_offsets = parse_index_line(line)
                     except: # When there's inconsistencies.
-                        if self.wordnet_33:
-                            lemma, pos, synset_offsets = parse_index_line(fix_inconsistent_line(line))
-                        else:
-                            raise WordNetError('Error parsing:\n{}\nfrom {}'.format(line, filename))
+                        ##if self.wordnet_33:
+                        ##    lemma, pos, synset_offsets = parse_index_line(fix_inconsistent_line(line))
+                        ##else:
+                        raise WordNetError('Error parsing:\n{}\nfrom {}'.format(line, filename))
                     # Cache the map.
                     _lemma_pos_offset_map[lemma][pos] = synset_offsets
                     if pos == 'a':
