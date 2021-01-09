@@ -3,13 +3,6 @@
 [![Build Status](https://travis-ci.org/nltk/wordnet.svg?branch=master)](https://travis-ci.org/nltk/wordnet)
 
 
-# Install
-
-```
-pip install -U wn
-```
-
-
 # Use
 
 ```python
