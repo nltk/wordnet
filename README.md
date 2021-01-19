@@ -2,6 +2,23 @@
 
 [![Build Status](https://travis-ci.org/nltk/wordnet.svg?branch=master)](https://travis-ci.org/nltk/wordnet)
 
+**Notice:** This repository is no longer being maintained. For a
+standalone Python module for wordnets with a similar API, please see
+<https://github.com/goodmami/wn>.
+
+# Install
+
+While this project is no longer maintained, you can install the last
+release (0.0.23) from PyPI as follows:
+
+```bash
+pip install -U 'wn==0.0.23'
+```
+
+The version number is required because the `wn` project on PyPI is now
+used by <https://github.com/goodmami/wn>. If you're interested in
+moving to the newer module, see the [migration
+guide](https://wn.readthedocs.io/en/latest/guides/nltk-migration.html).
 
 # Use
 
