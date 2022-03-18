@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/nltk/wordnet.svg?branch=master)](https://travis-ci.org/nltk/wordnet)
 
-**Notice:** This repository is no longer being maintained. For a
-standalone Python module for wordnets with a similar API, please see
-<https://github.com/goodmami/wn>.
+**Notice:** 
+
+# This repository is no longer being maintained. For a standalone Python module for wordnets with a similar API, please see <https://github.com/goodmami/wn>.
 
 # Install
 
